@@ -1,9 +1,9 @@
 <?php
 // ============================================================
-// Admin — Create Project
+// Create Project
 // ============================================================
 
-define('ROOT_PATH', dirname(__DIR__, 2));
+define('ROOT_PATH', dirname(__DIR__));
 require_once ROOT_PATH . '/config/app.php';
 require_once ROOT_PATH . '/config/database.php';
 require_once ROOT_PATH . '/includes/auth.php';
@@ -55,19 +55,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once ROOT_PATH . '/admin/partials/head.php';
+require_once ROOT_PATH . '/partials/head.php';
 ?>
 
 <!-- Global JS Config -->
 <script>
   const FAY_CONFIG = {
-    apiBase:   '<?= APP_URL ?>/../api',
-    adminBase: '<?= APP_URL ?>/../admin',
+    apiBase:   '<?= BASE_PATH ?>/api',
+    adminBase: '<?= BASE_PATH ?>',
     csrfToken: '<?= htmlspecialchars($csrfToken) ?>',
   };
 </script>
 
-<?php require_once ROOT_PATH . '/admin/partials/sidebar.php'; ?>
+<?php require_once ROOT_PATH . '/partials/sidebar.php'; ?>
 
 <div class="main-wrapper">
   <!-- Topbar -->
@@ -77,7 +77,7 @@ require_once ROOT_PATH . '/admin/partials/head.php';
     </button>
     <span class="topbar-title">Create Project</span>
     <div class="topbar-actions">
-      <a href="<?= APP_URL ?>/../admin/projects/index.php" class="btn btn-secondary btn-sm">
+      <a href="<?= BASE_PATH ?>/" class="btn btn-secondary btn-sm">
         <svg viewBox="0 0 16 16"><path d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"/></svg>
         Back
       </a>
@@ -323,7 +323,7 @@ require_once ROOT_PATH . '/admin/partials/head.php';
               </svg>
               Save Draft
             </button>
-            <a href="<?= APP_URL ?>/../admin/projects/index.php" class="btn btn-secondary" id="btn-cancel">
+            <a href="<?= BASE_PATH ?>/" class="btn btn-secondary" id="btn-cancel">
               Cancel
             </a>
           </div>
@@ -408,7 +408,7 @@ $(document).ready(function () {
       success: function (res) {
         if (res.success) {
           const msg = encodeURIComponent(res.message || 'Project created successfully.');
-          window.location.href = FAY_CONFIG.adminBase + '/projects/index.php?success=' + msg;
+          window.location.href = FAY_CONFIG.adminBase + '/?success=' + msg;
         } else {
           window.AdminToast.show(res.message || 'Failed to save project.', 'error');
           if (res.errors) {
@@ -438,4 +438,4 @@ $(document).ready(function () {
 });
 </script>
 
-<?php require_once ROOT_PATH . '/admin/partials/footer.php'; ?>
+<?php require_once ROOT_PATH . '/partials/footer.php'; ?>

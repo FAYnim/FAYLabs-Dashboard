@@ -10,7 +10,7 @@ function requireAdmin(): void
     }
 
     if (empty($_SESSION['admin_id'])) {
-        header('Location: ' . getAdminBaseUrl() . '/login.php');
+        header('Location: ' . BASE_PATH . '/login');
         exit;
     }
 }
@@ -47,23 +47,4 @@ function logoutAdmin(): void
         );
     }
     session_destroy();
-}
-
-function getAdminBaseUrl(): string
-{
-    // Determine base URL for admin redirects
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $script   = $_SERVER['SCRIPT_NAME'] ?? '';
-
-    // Walk up until we find /admin
-    $parts = explode('/', $script);
-    $adminIndex = array_search('admin', $parts);
-
-    if ($adminIndex !== false) {
-        $baseParts = array_slice($parts, 0, $adminIndex + 1);
-        return $protocol . '://' . $host . implode('/', $baseParts);
-    }
-
-    return $protocol . '://' . $host . '/admin';
 }

@@ -1,9 +1,9 @@
 <?php
 // ============================================================
-// Admin — Projects List
+// Dashboard — Projects List
 // ============================================================
 
-define('ROOT_PATH', dirname(__DIR__, 2));
+define('ROOT_PATH', dirname(__DIR__));
 require_once ROOT_PATH . '/config/app.php';
 require_once ROOT_PATH . '/config/database.php';
 require_once ROOT_PATH . '/includes/auth.php';
@@ -30,7 +30,7 @@ try {
     $dbError  = 'Failed to load projects.';
 }
 
-require_once ROOT_PATH . '/admin/partials/head.php';
+require_once ROOT_PATH . '/partials/head.php';
 ?>
 
 <!-- Delete Confirmation Modal -->
@@ -54,13 +54,13 @@ require_once ROOT_PATH . '/admin/partials/head.php';
 <!-- Global JS Config -->
 <script>
   const FAY_CONFIG = {
-    apiBase:   '<?= APP_URL ?>/../api',
-    adminBase: '<?= APP_URL ?>/../admin',
+    apiBase:   '<?= BASE_PATH ?>/api',
+    adminBase: '<?= BASE_PATH ?>',
     csrfToken: '<?= htmlspecialchars($csrfToken) ?>',
   };
 </script>
 
-<?php $activePage = 'projects'; require_once ROOT_PATH . '/admin/partials/sidebar.php'; ?>
+<?php $activePage = 'projects'; require_once ROOT_PATH . '/partials/sidebar.php'; ?>
 
 <!-- Main Content -->
 <div class="main-wrapper">
@@ -71,7 +71,7 @@ require_once ROOT_PATH . '/admin/partials/head.php';
     </button>
     <span class="topbar-title">Projects</span>
     <div class="topbar-actions">
-      <a href="<?= APP_URL ?>/../admin/projects/create.php" class="btn btn-primary">
+      <a href="<?= BASE_PATH ?>/create" class="btn btn-primary">
         <svg viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 01.75.75V7h4.25a.75.75 0 010 1.5H8.5v4.25a.75.75 0 01-1.5 0V8.5H2.75a.75.75 0 010-1.5H7V2.75A.75.75 0 017.75 2z"/></svg>
         New Project
       </a>
@@ -104,7 +104,7 @@ require_once ROOT_PATH . '/admin/partials/head.php';
       </div>
       <h3>No projects yet.</h3>
       <p>Start by creating your first portfolio project.</p>
-      <a href="<?= APP_URL ?>/../admin/projects/create.php" class="btn btn-primary" style="margin-top:16px;">
+      <a href="<?= BASE_PATH ?>/create" class="btn btn-primary" style="margin-top:16px;">
         <svg viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 01.75.75V7h4.25a.75.75 0 010 1.5H8.5v4.25a.75.75 0 01-1.5 0V8.5H2.75a.75.75 0 010-1.5H7V2.75A.75.75 0 017.75 2z"/></svg>
         Create First Project
       </a>
@@ -144,16 +144,8 @@ require_once ROOT_PATH . '/admin/partials/head.php';
 
           <!-- Actions -->
           <div class="project-card-actions">
-            <a href="<?= APP_URL ?>/projects/<?= e($p['slug']) ?>"
-               target="_blank"
-               class="btn btn-secondary btn-sm"
-               title="View public page"
-               <?= $p['status'] !== 'published' ? 'style="opacity:.5;pointer-events:none" tabindex="-1"' : '' ?>>
-              <svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/></svg>
-              View
-            </a>
 
-            <a href="<?= APP_URL ?>/../admin/projects/edit.php?id=<?= $p['id'] ?>"
+            <a href="<?= BASE_PATH ?>/edit?id=<?= $p['id'] ?>"
                class="btn btn-primary btn-sm">
               <svg viewBox="0 0 16 16"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 00-.064.108l-.558 1.953 1.953-.558a.253.253 0 00.108-.064l6.286-6.286zm1.238-3.763a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086z"/></svg>
               Edit
@@ -179,4 +171,4 @@ require_once ROOT_PATH . '/admin/partials/head.php';
 <!-- Toast container -->
 <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-<?php require_once ROOT_PATH . '/admin/partials/footer.php'; ?>
+<?php require_once ROOT_PATH . '/partials/footer.php'; ?>

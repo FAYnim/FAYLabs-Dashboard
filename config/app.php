@@ -3,8 +3,6 @@
 // App Configuration
 // ============================================================
 
-// define('ROOT_PATH', dirname(__DIR__));
-
 // Load .env file
 function loadEnv(string $path): void
 {
@@ -30,6 +28,8 @@ function loadEnv(string $path): void
 loadEnv(ROOT_PATH . '/.env');
 
 // App constants
-define('APP_NAME', $_ENV['APP_NAME'] ?? 'FAY Portfolio');
-define('APP_URL',  rtrim($_ENV['APP_URL'] ?? 'http://localhost/faydev/faylabs-dashboard/public', '/'));
+define('APP_NAME', $_ENV['APP_NAME'] ?? 'FAY Labs');
+define('APP_URL',  rtrim($_ENV['APP_URL'] ?? 'http://localhost/faydev/faylabs-dashboard', '/'));
 define('APP_ENV',  $_ENV['APP_ENV']  ?? 'production');
+
+define('BASE_PATH', rtrim($_ENV['BASE_PATH'] ?? '', '/'));

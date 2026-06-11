@@ -149,7 +149,7 @@
           </div>
           <h3>No projects yet.</h3>
           <p>Start by creating your first portfolio project.</p>
-          <a href="${FAY_CONFIG.adminBase}/projects/create.php" class="btn btn-primary mt-3">
+          <a href="${FAY_CONFIG.adminBase}/create" class="btn btn-primary mt-3">
             <svg viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 01.75.75V7h4.25a.75.75 0 010 1.5H8.5v4.25a.75.75 0 01-1.5 0V8.5H2.75a.75.75 0 010-1.5H7V2.75A.75.75 0 017.75 2z"/></svg>
             Create First Project
           </a>

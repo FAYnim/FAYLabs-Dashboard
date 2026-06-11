@@ -9,9 +9,9 @@
   <!-- DOMPurify -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.3/purify.min.js"></script>
   <!-- Admin JS -->
-  <script src="<?= APP_URL ?>/assets/js/admin.js"></script>
+  <script src="<?= BASE_PATH ?>/assets/js/admin.js"></script>
   <?php if (isset($loadEditor) && $loadEditor): ?>
-  <script src="<?= APP_URL ?>/assets/js/editor.js"></script>
+  <script src="<?= BASE_PATH ?>/assets/js/editor.js"></script>
   <?php endif; ?>
 
 </body>

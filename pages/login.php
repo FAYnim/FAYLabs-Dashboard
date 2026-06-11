@@ -1,6 +1,6 @@
 <?php
 // ============================================================
-// Admin Login Page
+// Login Page
 // ============================================================
 
 define('ROOT_PATH', dirname(__DIR__));
@@ -12,7 +12,7 @@ csrfStart();
 
 // Redirect if already logged in
 if (isLoggedIn()) {
-    header('Location: ' . APP_URL . '/../admin/projects/index.php');
+    header('Location: ' . BASE_PATH . '/');
     exit;
 }
 
@@ -25,9 +25,10 @@ $pageTitle = 'Login';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="base-path" content="<?= htmlspecialchars(BASE_PATH) ?>">
   <title>Admin Login — FAY Labs</title>
-  <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/admin.css">
-  <script src="<?= APP_URL ?>/assets/js/theme.js"></script>
+  <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/admin.css">
+  <script src="<?= BASE_PATH ?>/assets/js/theme.js"></script>
 </head>
 <body class="login-page">
 
@@ -91,6 +92,8 @@ $pageTitle = 'Login';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
+const BASE_PATH = document.querySelector('meta[name="base-path"]').content;
+
 $(document).ready(function () {
   $('#login-form').on('submit', function (e) {
     e.preventDefault();
@@ -108,7 +111,7 @@ $(document).ready(function () {
     $('#login-error').hide();
 
     $.ajax({
-      url: '<?= APP_URL ?>/../api/auth/login.php',
+      url: BASE_PATH + '/api/auth/login.php',
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({
@@ -119,7 +122,7 @@ $(document).ready(function () {
       success: function (res) {
         if (res.success) {
           $btn.html('<span class="spinner"></span> Redirecting...');
-          window.location.href = '<?= APP_URL ?>/../admin/projects/index.php';
+          window.location.href = BASE_PATH + '/';
         } else {
           showError(res.message || 'Invalid username or password.');
           $btn.html('Sign In').prop('disabled', false);

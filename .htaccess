@@ -3,6 +3,13 @@ Options +FollowSymLinks
 
 RewriteEngine On
 
-# Redirect root to public, excluding admin, api, and database directories
-RewriteRule ^$ public/ [L]
-RewriteRule ^((?!(public/|admin/|api/|database/)).*)$ public/$1 [L,NC]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^login/?$ pages/login.php [L]
+RewriteRule ^logout/?$ pages/logout.php [L]
+RewriteRule ^create/?$ pages/create.php [L]
+RewriteRule ^edit/?$ pages/edit.php [L]
+
+RewriteRule ^$ pages/index.php [L]

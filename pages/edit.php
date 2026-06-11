@@ -1,9 +1,9 @@
 <?php
 // ============================================================
-// Admin — Edit Project
+// Edit Project
 // ============================================================
 
-define('ROOT_PATH', dirname(__DIR__, 2));
+define('ROOT_PATH', dirname(__DIR__));
 require_once ROOT_PATH . '/config/app.php';
 require_once ROOT_PATH . '/config/database.php';
 require_once ROOT_PATH . '/includes/auth.php';
@@ -15,7 +15,7 @@ requireAdmin();
 
 $id = (int) ($_GET['id'] ?? 0);
 if ($id <= 0) {
-    header('Location: ' . APP_URL . '/../admin/projects/index.php');
+    header('Location: ' . BASE_PATH . '/');
     exit;
 }
 
@@ -30,7 +30,7 @@ try {
 }
 
 if (!$project) {
-    header('Location: ' . APP_URL . '/../admin/projects/index.php?error=' . urlencode('Project not found.'));
+    header('Location: ' . BASE_PATH . '/?error=' . urlencode('Project not found.'));
     exit;
 }
 
@@ -40,20 +40,20 @@ $activePage = 'projects';
 $csrfToken  = csrfGenerate();
 $loadEditor = true;
 
-require_once ROOT_PATH . '/admin/partials/head.php';
+require_once ROOT_PATH . '/partials/head.php';
 ?>
 
 <script>
   const FAY_CONFIG = {
-    apiBase:   '<?= APP_URL ?>/../api',
-    adminBase: '<?= APP_URL ?>/../admin',
+    apiBase:   '<?= BASE_PATH ?>/api',
+    adminBase: '<?= BASE_PATH ?>',
     csrfToken: '<?= htmlspecialchars($csrfToken) ?>',
   };
   const EDIT_PROJECT_ID = <?= $id ?>;
   const EDIT_TECH_STACK = <?= json_encode($techStack) ?>;
 </script>
 
-<?php require_once ROOT_PATH . '/admin/partials/sidebar.php'; ?>
+<?php require_once ROOT_PATH . '/partials/sidebar.php'; ?>
 
 <div class="main-wrapper">
   <header class="topbar">
@@ -62,16 +62,10 @@ require_once ROOT_PATH . '/admin/partials/head.php';
     </button>
     <span class="topbar-title">Edit Project</span>
     <div class="topbar-actions">
-      <a href="<?= APP_URL ?>/../admin/projects/index.php" class="btn btn-secondary btn-sm">
+      <a href="<?= BASE_PATH ?>/" class="btn btn-secondary btn-sm">
         <svg viewBox="0 0 16 16"><path d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"/></svg>
         Back
       </a>
-      <?php if ($project['status'] === 'published'): ?>
-      <a href="<?= APP_URL ?>/projects/<?= e($project['slug']) ?>" target="_blank" class="btn btn-secondary btn-sm">
-        <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M3.75 2h3.5a.75.75 0 010 1.5h-3.5a.25.25 0 00-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25v-3.5a.75.75 0 011.5 0v3.5A1.75 1.75 0 0112.25 14h-8.5A1.75 1.75 0 012 12.25v-8.5C2 2.784 2.784 2 3.75 2zm6.854-1h4.146a.25.25 0 01.25.25v4.146a.25.25 0 01-.427.177L13.03 4.03 9.28 7.78a.75.75 0 01-1.06-1.06l3.75-3.75-1.543-1.543A.25.25 0 0110.604 1z"/></svg>
-        View Live
-      </a>
-      <?php endif; ?>
     </div>
   </header>
 
@@ -273,7 +267,7 @@ require_once ROOT_PATH . '/admin/partials/head.php';
               <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2.75 1A1.75 1.75 0 001 2.75v10.5C1 14.216 1.784 15 2.75 15h10.5A1.75 1.75 0 0015 13.25V4.56a.25.25 0 00-.073-.177l-3.31-3.31A.25.25 0 0011.44 1H2.75z"/></svg>
               Save as Draft
             </button>
-            <a href="<?= APP_URL ?>/../admin/projects/index.php" class="btn btn-secondary">Cancel</a>
+            <a href="<?= BASE_PATH ?>/" class="btn btn-secondary">Cancel</a>
           </div>
         </aside>
       </div>
@@ -335,7 +329,7 @@ $(document).ready(function () {
       success: function (res) {
         if (res.success) {
           const msg = encodeURIComponent(res.message || 'Project updated successfully.');
-          window.location.href = FAY_CONFIG.adminBase + '/projects/index.php?success=' + msg;
+          window.location.href = FAY_CONFIG.adminBase + '/?success=' + msg;
         } else {
           window.AdminToast.show(res.message || 'Failed to update project.', 'error');
           $btn.html(status === 'published' ? 'Update Published' : 'Save as Draft').prop('disabled', false);
@@ -360,4 +354,4 @@ $(document).ready(function () {
 });
 </script>
 
-<?php require_once ROOT_PATH . '/admin/partials/footer.php'; ?>
+<?php require_once ROOT_PATH . '/partials/footer.php'; ?>

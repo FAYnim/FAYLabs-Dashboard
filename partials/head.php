@@ -1,6 +1,6 @@
 <?php
-// Admin Layout — <head> Partial
-// Requires: $pageTitle, ROOT_PATH, APP_URL defined
+// Layout — <head> Partial
+// Requires: $pageTitle, ROOT_PATH, config/app.php loaded
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -8,6 +8,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="base-path" content="<?= htmlspecialchars(BASE_PATH) ?>">
   <title><?= htmlspecialchars($pageTitle ?? 'Dashboard') ?> — FAY Labs Admin</title>
 
   <!-- Bootstrap CSS -->
@@ -20,10 +21,10 @@
         id="hljs-dark-theme" disabled>
 
   <!-- Admin CSS -->
-  <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/admin.css">
+  <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/admin.css">
 
   <!-- Theme script (before body to avoid FOUC) -->
-  <script src="<?= APP_URL ?>/assets/js/theme.js"></script>
+  <script src="<?= BASE_PATH ?>/assets/js/theme.js"></script>
   <script>
     // Sync hljs theme with app theme
     document.addEventListener('DOMContentLoaded', function() {
