@@ -1,0 +1,8 @@
+Options -Indexes
+Options +FollowSymLinks
+
+RewriteEngine On
+
+# Redirect root to public, excluding admin, api, and database directories
+RewriteRule ^$ public/ [L]
+RewriteRule ^((?!(public/|admin/|api/|database/)).*)$ public/$1 [L,NC]
