@@ -37,7 +37,7 @@ require_once ROOT_PATH . '/partials/head.php';
 <div id="delete-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
   <div class="modal-box">
     <div class="modal-icon" aria-hidden="true">
-      <svg viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zm-4.5 0V3h3V1.75a.25.25 0 00-.25-.25h-2.5a.25.25 0 00-.25.25zM4.997 6.75a.75.75 0 00-.497.732l.5 6.5A.75.75 0 005.75 14.5h4.5a.75.75 0 00.75-.518l.5-6.5a.75.75 0 00-1.497-.116l-.44 5.714H7.443l-.44-5.714a.75.75 0 00-.756-.116z" fill-rule="evenodd"/></svg>
+      <i class="bi bi-trash3-fill" aria-hidden="true"></i>
     </div>
     <h2 class="modal-title" id="delete-modal-title">Delete Project?</h2>
     <p class="modal-message">Are you sure you want to delete "<strong id="delete-modal-name"></strong>"?</p>
@@ -67,12 +67,12 @@ require_once ROOT_PATH . '/partials/head.php';
   <!-- Topbar -->
   <header class="topbar">
     <button id="sidebar-toggle" class="topbar-hamburger" aria-label="Toggle sidebar">
-      <svg viewBox="0 0 16 16"><path d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 000 1.5h12.5a.75.75 0 000-1.5H1.75z"/></svg>
+      <i class="bi bi-list" aria-hidden="true"></i>
     </button>
     <span class="topbar-title">Projects</span>
     <div class="topbar-actions">
       <a href="<?= BASE_PATH ?>/create" class="btn btn-primary">
-        <svg viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 01.75.75V7h4.25a.75.75 0 010 1.5H8.5v4.25a.75.75 0 01-1.5 0V8.5H2.75a.75.75 0 010-1.5H7V2.75A.75.75 0 017.75 2z"/></svg>
+        <i class="bi bi-plus-circle" aria-hidden="true"></i>
         New Project
       </a>
     </div>
@@ -87,9 +87,7 @@ require_once ROOT_PATH . '/partials/head.php';
 
     <?php if (isset($dbError)): ?>
     <div class="alert alert-danger">
-      <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-        <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 10.5a1 1 0 11-2 0 1 1 0 012 0zm-.25-4.75a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3z"/>
-      </svg>
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
       <?= e($dbError) ?>
     </div>
     <?php endif; ?>
@@ -98,14 +96,12 @@ require_once ROOT_PATH . '/partials/head.php';
     <!-- Empty State -->
     <div class="empty-state">
       <div class="empty-state-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
-          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-        </svg>
+        <i class="bi bi-collection" aria-hidden="true"></i>
       </div>
       <h3>No projects yet.</h3>
       <p>Start by creating your first portfolio project.</p>
       <a href="<?= BASE_PATH ?>/create" class="btn btn-primary" style="margin-top:16px;">
-        <svg viewBox="0 0 16 16"><path d="M7.75 2a.75.75 0 01.75.75V7h4.25a.75.75 0 010 1.5H8.5v4.25a.75.75 0 01-1.5 0V8.5H2.75a.75.75 0 010-1.5H7V2.75A.75.75 0 017.75 2z"/></svg>
+        <i class="bi bi-plus-circle" aria-hidden="true"></i>
         Create First Project
       </a>
     </div>
@@ -123,7 +119,7 @@ require_once ROOT_PATH . '/partials/head.php';
                loading="lazy">
         <?php else: ?>
           <div class="project-card-img-placeholder" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            <i class="bi bi-image" aria-hidden="true"></i>
           </div>
         <?php endif; ?>
 
@@ -147,7 +143,7 @@ require_once ROOT_PATH . '/partials/head.php';
 
             <a href="<?= BASE_PATH ?>/edit?id=<?= $p['id'] ?>"
                class="btn btn-primary btn-sm">
-              <svg viewBox="0 0 16 16"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 00-.064.108l-.558 1.953 1.953-.558a.253.253 0 00.108-.064l6.286-6.286zm1.238-3.763a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086z"/></svg>
+              <i class="bi bi-pencil-square" aria-hidden="true"></i>
               Edit
             </a>
 
@@ -155,7 +151,7 @@ require_once ROOT_PATH . '/partials/head.php';
                     data-id="<?= $p['id'] ?>"
                     data-title="<?= e($p['title']) ?>"
                     aria-label="Delete <?= e($p['title']) ?>">
-              <svg viewBox="0 0 16 16"><path d="M11 1.75V3h2.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zM4.496 6.675a.75.75 0 10-1.492.15l.66 6.6A1.75 1.75 0 005.405 15h5.19c.9 0 1.652-.681 1.741-1.576l.66-6.6a.75.75 0 00-1.492-.149l-.66 6.6a.25.25 0 01-.249.225h-5.19a.25.25 0 01-.249-.225l-.66-6.6z"/></svg>
+              <i class="bi bi-trash-fill" aria-hidden="true"></i>
               Delete
             </button>
           </div>

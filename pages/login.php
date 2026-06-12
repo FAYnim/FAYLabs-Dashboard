@@ -27,6 +27,7 @@ $pageTitle = 'Login';
   <meta name="robots" content="noindex, nofollow">
   <meta name="base-path" content="<?= htmlspecialchars(BASE_PATH) ?>">
   <title>Admin Login — FAY Labs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/admin.css">
   <script src="<?= BASE_PATH ?>/assets/js/theme.js"></script>
 </head>
@@ -36,9 +37,7 @@ $pageTitle = 'Login';
   <!-- Logo -->
   <div class="login-logo">
     <div class="brand-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="26" height="26">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-      </svg>
+      <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>
     </div>
     <h1>FAY Labs</h1>
     <p>Sign in to your admin dashboard</p>
@@ -46,9 +45,7 @@ $pageTitle = 'Login';
 
   <!-- Error Alert -->
   <div id="login-error" class="alert alert-danger" style="display:none">
-    <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-      <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 10.5a1 1 0 11-2 0 1 1 0 012 0zm-.25-4.75a.75.75 0 00-1.5 0v3a.75.75 0 001.5 0v-3z"/>
-    </svg>
+    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
     <span id="login-error-msg">Invalid username or password.</span>
   </div>
 
@@ -77,12 +74,8 @@ $pageTitle = 'Login';
   <!-- Theme toggle -->
   <div style="text-align:center; margin-top:20px;">
     <button data-theme-toggle class="btn btn-secondary btn-sm" style="font-size:12px; gap:6px;">
-      <svg class="icon-sun" viewBox="0 0 16 16" width="12" height="12" style="display:block; fill:currentColor">
-        <path d="M8 11a3 3 0 110-6 3 3 0 010 6zm0 1a4 4 0 100-8 4 4 0 000 8zM8 0a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2A.5.5 0 018 0zm0 13a.5.5 0 01.5.5v2a.5.5 0 01-1 0v-2A.5.5 0 018 13z"/>
-      </svg>
-      <svg class="icon-moon" viewBox="0 0 16 16" width="12" height="12" style="display:none; fill:currentColor">
-        <path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/>
-      </svg>
+      <i class="bi bi-sun-fill icon-sun" style="display:block" aria-hidden="true"></i>
+      <i class="bi bi-moon-stars-fill icon-moon" style="display:none" aria-hidden="true"></i>
       <span class="theme-label">Dark Mode</span>
     </button>
   </div>
