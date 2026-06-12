@@ -39,7 +39,7 @@ class Cloudinary
         ksort($paramsToSign);
 
         $signString = http_build_query($paramsToSign, '', '&', PHP_QUERY_RFC3986);
-        $signature  = hash('sha256', $signString . $config['api_secret']);
+        $signature  = hash('sha1', $signString . $config['api_secret']);
 
         $uploadUrl = "https://api.cloudinary.com/v1_1/{$config['cloud_name']}/image/upload";
 
@@ -100,7 +100,7 @@ class Cloudinary
         ksort($paramsToSign);
 
         $signString = http_build_query($paramsToSign, '', '&', PHP_QUERY_RFC3986);
-        $signature  = hash('sha256', $signString . $config['api_secret']);
+        $signature  = hash('sha1', $signString . $config['api_secret']);
 
         $destroyUrl = "https://api.cloudinary.com/v1_1/{$config['cloud_name']}/image/destroy";
 

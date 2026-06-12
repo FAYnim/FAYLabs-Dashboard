@@ -210,7 +210,8 @@
 
     if (!$area.length) return;
 
-    $area.on('click', () => $fileIn.trigger('click'));
+    // Note: click handled natively by <label for="cover-file-input">
+    // (avoids jQuery .trigger('click') losing user-gesture trust on file inputs)
 
     $area.on('dragover', function (e) {
       e.preventDefault();
@@ -324,17 +325,130 @@
   // ── Form Submission ───────────────────────────────────────
 
   function initFormSubmit() {
-    $('[data-action="save-draft"], [data-action="publish"]').on('click', function (e) {
+    const $form = $('#project-form');
+    if (!$form.length) return;
+
+    // Stash original button HTML for restoration on validation/network error
+    $form.find('[data-action="save-draft"], [data-action="publish"]').each(function () {
+      $(this).data('orig-html', $(this).html());
+    });
+
+    // Pre-fill tech-stack hidden field on edit page (after initTagInput has rendered)
+    if (typeof EDIT_TECH_STACK !== 'undefined' && Array.isArray(EDIT_TECH_STACK) && EDIT_TECH_STACK.length) {
+      $('#tech-stack-hidden').val(JSON.stringify(EDIT_TECH_STACK));
+    }
+
+    // Button click: set status, show spinner, trigger submit
+    $form.on('click', '[data-action="save-draft"], [data-action="publish"]', function (e) {
       e.preventDefault();
-      const action  = $(this).data('action');
+      const $btn    = $(this);
+      const action  = $btn.data('action');
       const status  = action === 'publish' ? 'published' : 'draft';
       const label   = action === 'publish' ? 'Publishing...' : 'Saving draft...';
-      const $btn    = $(this);
-
-      $btn.html(`<span class="spinner"></span> ${label}`).prop('disabled', true);
-      $('input[name="status"]').val(status);
-      $btn.closest('form').trigger('submit');
+      $btn.html('<span class="spinner"></span> ' + label).prop('disabled', true);
+      $form.find('input[name="status"]').val(status);
+      $form.trigger('submit');
     });
+
+    // Form submit: prevent native, validate, AJAX
+    $form.on('submit', function (e) {
+      e.preventDefault();
+
+      const status   = $form.find('input[name="status"]').val();
+      const $btn     = status === 'published' ? $('#btn-publish') : $('#btn-draft');
+      const endpoint = $form.data('endpoint');
+
+      if (!endpoint) {
+        window.AdminToast && window.AdminToast.show('Form endpoint not configured.', 'error');
+        return;
+      }
+
+      // Tech stack
+      let techStack = [];
+      try { techStack = JSON.parse($('#tech-stack-hidden').val() || '[]'); } catch (_) {}
+      if (techStack.length < 1) {
+        window.AdminToast && window.AdminToast.show('Please add at least one tech stack item.', 'error');
+        resetBtn($btn);
+        return;
+      }
+
+      // Cover image
+      if (!$('#cover-image-url').val()) {
+        window.AdminToast && window.AdminToast.show('Please upload a cover image.', 'error');
+        resetBtn($btn);
+        return;
+      }
+
+      const payload = {
+        csrf_token:      FAY_CONFIG.csrfToken,
+        title:           $('#project-title').val().trim(),
+        slug:            $('#project-slug').val().trim(),
+        description:     $('#project-desc').val().trim(),
+        cover_image:     $('#cover-image-url').val(),
+        cover_public_id: $('#cover-public-id').val(),
+        label:           $('#project-label').val(),
+        content:         $('#editor-content').val().trim(),
+        tech_stack:      techStack,
+        github_url:      $('#github-url').val().trim(),
+        demo_url:        $('#demo-url').val().trim(),
+        project_year:    parseInt($('#project-year').val(), 10),
+        status:          status,
+        seo_title:       $('#seo-title').val().trim(),
+        seo_description: $('#seo-desc').val().trim(),
+      };
+
+      // Basic client validation
+      if (!payload.title || payload.title.length < 3) {
+        window.AdminToast && window.AdminToast.show('Title must be at least 3 characters.', 'error');
+        resetBtn($btn);
+        return;
+      }
+      if (!payload.slug || payload.slug.length < 3) {
+        window.AdminToast && window.AdminToast.show('Slug must be at least 3 characters.', 'error');
+        resetBtn($btn);
+        return;
+      }
+      if (!payload.description || payload.description.length < 10) {
+        window.AdminToast && window.AdminToast.show('Description must be at least 10 characters.', 'error');
+        resetBtn($btn);
+        return;
+      }
+      if (!payload.content || payload.content.length < 20) {
+        window.AdminToast && window.AdminToast.show('Content must be at least 20 characters.', 'error');
+        resetBtn($btn);
+        return;
+      }
+
+      $.ajax({
+        url:         endpoint,
+        method:      'POST',
+        contentType: 'application/json',
+        data:        JSON.stringify(payload),
+        success: function (res) {
+          if (res && res.success) {
+            const msg = encodeURIComponent(res.message || 'Saved successfully.');
+            window.location.href = FAY_CONFIG.adminBase + '/?success=' + msg;
+          } else {
+            window.AdminToast && window.AdminToast.show((res && res.message) || 'Failed to save.', 'error');
+            if (res && res.errors) {
+              const firstError = Object.values(res.errors)[0];
+              if (firstError) window.AdminToast && window.AdminToast.show(firstError, 'error');
+            }
+            resetBtn($btn);
+          }
+        },
+        error: function () {
+          window.AdminToast && window.AdminToast.show('Network error. Please try again.', 'error');
+          resetBtn($btn);
+        }
+      });
+    });
+
+    function resetBtn($btn) {
+      if (!$btn || !$btn.length) return;
+      const orig = $btn.data('orig-html');
+      $btn.html(orig || 'Save').prop('disabled', false);
+    }
   }
 
   // ── Char Counter ──────────────────────────────────────────

@@ -78,7 +78,7 @@ require_once ROOT_PATH . '/partials/head.php';
       <?php endif; ?>
     </div>
 
-    <form id="project-form" novalidate>
+    <form id="project-form" data-endpoint="<?= BASE_PATH ?>/api/projects/update.php?id=<?= $id ?>" novalidate>
       <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
       <input type="hidden" name="status" value="<?= e($project['status']) ?>">
       <input type="hidden" id="cover-image-url" name="cover_image" value="<?= e($project['cover_image']) ?>">
@@ -162,10 +162,10 @@ require_once ROOT_PATH . '/partials/head.php';
 
           <!-- Cover Image -->
           <div class="form-group">
-            <label class="form-label">Cover Image <span class="required">*</span></label>
+            <span class="form-label">Cover Image <span class="required">*</span></span>
 
-            <div id="cover-upload-area" class="cover-upload-area" role="button" tabindex="0"
-                 style="<?= $project['cover_image'] ? 'display:none' : '' ?>">
+            <label id="cover-upload-area" for="cover-file-input" class="cover-upload-area"
+                   style="<?= $project['cover_image'] ? 'display:none' : '' ?>">
               <svg viewBox="0 0 24 24" width="32" height="32" fill="var(--text-muted)">
                 <path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
               </svg>
@@ -173,7 +173,7 @@ require_once ROOT_PATH . '/partials/head.php';
               <p style="font-size:11px;margin-top:4px">JPG, PNG, WEBP · Max 2 MB</p>
               <input type="file" id="cover-file-input" accept="image/jpeg,image/png,image/webp"
                      style="display:none">
-            </div>
+            </label>
 
             <div id="cover-preview" class="cover-preview"
                  style="<?= $project['cover_image'] ? '' : 'display:none' ?>">
@@ -276,82 +276,5 @@ require_once ROOT_PATH . '/partials/head.php';
 </div>
 
 <div id="toast-container" class="toast-container" aria-live="polite"></div>
-
-<!-- Edit-specific form logic -->
-<script>
-$(document).ready(function () {
-  // Pre-load tech stack from PHP
-  if (typeof EDIT_TECH_STACK !== 'undefined' && EDIT_TECH_STACK.length > 0) {
-    $('#tech-stack-hidden').val(JSON.stringify(EDIT_TECH_STACK));
-    // Tag init will read this on load
-  }
-
-  $('#project-form').on('submit', function (e) {
-    e.preventDefault();
-
-    const status = $('input[name="status"]').val();
-    const $btn   = status === 'published' ? $('#btn-publish') : $('#btn-draft');
-    const label  = status === 'published' ? 'Publishing...' : 'Saving draft...';
-
-    let techStack = [];
-    try { techStack = JSON.parse($('#tech-stack-hidden').val() || '[]'); } catch(e) {}
-
-    if (techStack.length < 1) {
-      window.AdminToast.show('Please add at least one tech stack item.', 'error');
-      return;
-    }
-
-    const payload = {
-      csrf_token:      FAY_CONFIG.csrfToken,
-      title:           $('#project-title').val().trim(),
-      slug:            $('#project-slug').val().trim(),
-      description:     $('#project-desc').val().trim(),
-      cover_image:     $('#cover-image-url').val(),
-      cover_public_id: $('#cover-public-id').val(),
-      label:           $('#project-label').val(),
-      content:         $('#editor-content').val().trim(),
-      tech_stack:      techStack,
-      github_url:      $('#github-url').val().trim(),
-      demo_url:        $('#demo-url').val().trim(),
-      project_year:    parseInt($('#project-year').val()),
-      status:          status,
-      seo_title:       $('#seo-title').val().trim(),
-      seo_description: $('#seo-desc').val().trim(),
-    };
-
-    $btn.html('<span class="spinner"></span> ' + label).prop('disabled', true);
-
-    $.ajax({
-      url: FAY_CONFIG.apiBase + '/projects/update.php?id=' + EDIT_PROJECT_ID,
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(payload),
-      success: function (res) {
-        if (res.success) {
-          const msg = encodeURIComponent(res.message || 'Project updated successfully.');
-          window.location.href = FAY_CONFIG.adminBase + '/?success=' + msg;
-        } else {
-          window.AdminToast.show(res.message || 'Failed to update project.', 'error');
-          $btn.html(status === 'published' ? 'Update Published' : 'Save as Draft').prop('disabled', false);
-        }
-      },
-      error: function () {
-        window.AdminToast.show('Network error. Please try again.', 'error');
-        $btn.html(status === 'published' ? 'Update Published' : 'Save as Draft').prop('disabled', false);
-      }
-    });
-  });
-
-  $('#btn-publish').on('click', function () {
-    $('input[name="status"]').val('published');
-    $('#project-form').trigger('submit');
-  });
-
-  $('#btn-draft').on('click', function () {
-    $('input[name="status"]').val('draft');
-    $('#project-form').trigger('submit');
-  });
-});
-</script>
 
 <?php require_once ROOT_PATH . '/partials/footer.php'; ?>

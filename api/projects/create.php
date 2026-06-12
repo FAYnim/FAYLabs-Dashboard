@@ -63,7 +63,6 @@ $v->required('title', 'Title')
   ->url('demo_url', 'Demo URL');
 
 if (count($data['tech_stack']) < 1) {
-    $v->errors()['tech_stack'] ?? null;
     jsonError('Tech stack must have at least 1 item.', ['tech_stack' => 'At least 1 tech stack item is required.']);
 }
 

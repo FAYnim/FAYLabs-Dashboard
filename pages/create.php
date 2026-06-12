@@ -85,7 +85,7 @@ require_once ROOT_PATH . '/partials/head.php';
   </header>
 
   <main class="page-content" style="max-width:none;">
-    <form id="project-form" novalidate>
+    <form id="project-form" data-endpoint="<?= BASE_PATH ?>/api/projects/create.php" novalidate>
       <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
       <input type="hidden" name="status" value="draft">
       <input type="hidden" id="cover-image-url" name="cover_image" value="">
@@ -209,8 +209,8 @@ require_once ROOT_PATH . '/partials/head.php';
             </label>
 
             <!-- Upload Area -->
-            <div id="cover-upload-area" class="cover-upload-area" role="button" tabindex="0"
-                 aria-label="Upload cover image">
+            <label id="cover-upload-area" for="cover-file-input" class="cover-upload-area"
+                   aria-label="Upload cover image">
               <svg viewBox="0 0 24 24" width="32" height="32" fill="var(--text-muted)" aria-hidden="true">
                 <path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
               </svg>
@@ -218,7 +218,7 @@ require_once ROOT_PATH . '/partials/head.php';
               <p style="font-size:11px;margin-top:4px">JPG, PNG, WEBP · Max 2 MB</p>
               <input type="file" id="cover-file-input" accept="image/jpeg,image/png,image/webp"
                      style="display:none" aria-label="Select cover image file">
-            </div>
+            </label>
 
             <!-- Preview -->
             <div id="cover-preview" class="cover-preview" style="display:none">
@@ -335,107 +335,5 @@ require_once ROOT_PATH . '/partials/head.php';
 </div>
 
 <div id="toast-container" class="toast-container" aria-live="polite"></div>
-
-<!-- Form Submit Handler -->
-<script>
-$(document).ready(function () {
-  $('#project-form').on('submit', function (e) {
-    e.preventDefault();
-
-    const $form   = $(this);
-    const status  = $('input[name="status"]').val();
-    const $btn    = status === 'published' ? $('#btn-publish') : $('#btn-draft');
-    const label   = status === 'published' ? 'Publishing...' : 'Saving draft...';
-
-    // Collect form data
-    const techStackJson = $('#tech-stack-hidden').val();
-    let techStack = [];
-    try { techStack = JSON.parse(techStackJson); } catch(e) {}
-
-    if (techStack.length < 1) {
-      window.AdminToast.show('Please add at least one tech stack item.', 'error');
-      return;
-    }
-
-    if (!$('#cover-image-url').val()) {
-      window.AdminToast.show('Please upload a cover image.', 'error');
-      return;
-    }
-
-    const payload = {
-      csrf_token:      FAY_CONFIG.csrfToken,
-      title:           $('#project-title').val().trim(),
-      slug:            $('#project-slug').val().trim(),
-      description:     $('#project-desc').val().trim(),
-      cover_image:     $('#cover-image-url').val(),
-      cover_public_id: $('#cover-public-id').val(),
-      label:           $('#project-label').val(),
-      content:         $('#editor-content').val().trim(),
-      tech_stack:      techStack,
-      github_url:      $('#github-url').val().trim(),
-      demo_url:        $('#demo-url').val().trim(),
-      project_year:    parseInt($('#project-year').val()),
-      status:          status,
-      seo_title:       $('#seo-title').val().trim(),
-      seo_description: $('#seo-desc').val().trim(),
-    };
-
-    // Basic client validation
-    if (!payload.title || payload.title.length < 3) {
-      window.AdminToast.show('Title must be at least 3 characters.', 'error');
-      return;
-    }
-    if (!payload.slug || payload.slug.length < 3) {
-      window.AdminToast.show('Slug must be at least 3 characters.', 'error');
-      return;
-    }
-    if (!payload.description || payload.description.length < 10) {
-      window.AdminToast.show('Description must be at least 10 characters.', 'error');
-      return;
-    }
-    if (!payload.content || payload.content.length < 20) {
-      window.AdminToast.show('Content must be at least 20 characters.', 'error');
-      return;
-    }
-
-    $btn.html('<span class="spinner"></span> ' + label).prop('disabled', true);
-
-    $.ajax({
-      url: FAY_CONFIG.apiBase + '/projects/create.php',
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify(payload),
-      success: function (res) {
-        if (res.success) {
-          const msg = encodeURIComponent(res.message || 'Project created successfully.');
-          window.location.href = FAY_CONFIG.adminBase + '/?success=' + msg;
-        } else {
-          window.AdminToast.show(res.message || 'Failed to save project.', 'error');
-          if (res.errors) {
-            const firstError = Object.values(res.errors)[0];
-            if (firstError) window.AdminToast.show(firstError, 'error');
-          }
-          $btn.html(status === 'published' ? 'Publish' : 'Save Draft').prop('disabled', false);
-        }
-      },
-      error: function () {
-        window.AdminToast.show('Network error. Please try again.', 'error');
-        $btn.html(status === 'published' ? 'Publish' : 'Save Draft').prop('disabled', false);
-      }
-    });
-  });
-
-  // Button click handlers
-  $('#btn-publish').on('click', function () {
-    $('input[name="status"]').val('published');
-    $('#project-form').trigger('submit');
-  });
-
-  $('#btn-draft').on('click', function () {
-    $('input[name="status"]').val('draft');
-    $('#project-form').trigger('submit');
-  });
-});
-</script>
 
 <?php require_once ROOT_PATH . '/partials/footer.php'; ?>
