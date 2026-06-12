@@ -1,6 +1,6 @@
 # FAYLabs Dashboard
 
-A lightweight portfolio project CMS dashboard built with native PHP, MySQL, Bootstrap, jQuery, and Cloudinary.
+A lightweight portfolio project CMS dashboard built with native PHP, MySQL, Bootstrap, Bootstrap Icons, jQuery, and Cloudinary.
 
 ## Overview
 
@@ -23,7 +23,7 @@ FAYLabs Dashboard helps a single admin manage portfolio projects for a public po
 
 | Layer | Technology |
 | --- | --- |
-| Frontend | HTML5, CSS3, Bootstrap 5, Vanilla JavaScript, jQuery |
+| Frontend | HTML5, CSS3, Bootstrap 5, Bootstrap Icons, Vanilla JavaScript, jQuery |
 | Backend | PHP Native |
 | Database | MySQL |
 | Markdown | marked.js, highlight.js, DOMPurify |

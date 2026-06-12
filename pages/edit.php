@@ -58,12 +58,12 @@ require_once ROOT_PATH . '/partials/head.php';
 <div class="main-wrapper">
   <header class="topbar">
     <button id="sidebar-toggle" class="topbar-hamburger" aria-label="Toggle sidebar">
-      <svg viewBox="0 0 16 16"><path d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 000 1.5h12.5a.75.75 0 000-1.5H1.75z"/></svg>
+      <i class="bi bi-list" aria-hidden="true"></i>
     </button>
     <span class="topbar-title">Edit Project</span>
     <div class="topbar-actions">
       <a href="<?= BASE_PATH ?>/" class="btn btn-secondary btn-sm">
-        <svg viewBox="0 0 16 16"><path d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z"/></svg>
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
         Back
       </a>
     </div>
@@ -102,11 +102,11 @@ require_once ROOT_PATH . '/partials/head.php';
           <div class="editor-panel">
             <div class="editor-tabs" role="tablist">
               <button type="button" class="editor-tab active" data-target="write" role="tab">
-                <svg viewBox="0 0 16 16" width="14" height="14" style="fill:currentColor;vertical-align:-2px;margin-right:4px"><path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61z"/></svg>
+                <i class="bi bi-pencil-square" aria-hidden="true"></i>
                 Write
               </button>
               <button type="button" class="editor-tab" data-target="preview" role="tab">
-                <svg viewBox="0 0 16 16" width="14" height="14" style="fill:currentColor;vertical-align:-2px;margin-right:4px"><path d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0z"/></svg>
+                <i class="bi bi-eye" aria-hidden="true"></i>
                 Preview
               </button>
             </div>
@@ -166,9 +166,7 @@ require_once ROOT_PATH . '/partials/head.php';
 
             <label id="cover-upload-area" for="cover-file-input" class="cover-upload-area"
                    style="<?= $project['cover_image'] ? 'display:none' : '' ?>">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="var(--text-muted)">
-                <path d="M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
-              </svg>
+              <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
               <p>Drag & drop or <span>click to upload</span></p>
               <p style="font-size:11px;margin-top:4px">JPG, PNG, WEBP · Max 2 MB</p>
               <input type="file" id="cover-file-input" accept="image/jpeg,image/png,image/webp"
@@ -260,11 +258,11 @@ require_once ROOT_PATH . '/partials/head.php';
           <!-- Action Buttons -->
           <div style="display:flex;flex-direction:column;gap:8px;">
             <button type="button" class="btn btn-success" data-action="publish" id="btn-publish">
-              <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0a8 8 0 110 16A8 8 0 018 0zm3.78 4.22a.75.75 0 00-1.06 0L6.75 7.19 5.28 5.72a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4.5-4.5a.75.75 0 000-1.06z"/></svg>
+              <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
               <?= $project['status'] === 'published' ? 'Update Published' : 'Publish' ?>
             </button>
             <button type="button" class="btn btn-secondary" data-action="save-draft" id="btn-draft">
-              <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2.75 1A1.75 1.75 0 001 2.75v10.5C1 14.216 1.784 15 2.75 15h10.5A1.75 1.75 0 0015 13.25V4.56a.25.25 0 00-.073-.177l-3.31-3.31A.25.25 0 0011.44 1H2.75z"/></svg>
+              <i class="bi bi-save" aria-hidden="true"></i>
               Save as Draft
             </button>
             <a href="<?= BASE_PATH ?>/" class="btn btn-secondary">Cancel</a>
