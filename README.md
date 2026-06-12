@@ -35,18 +35,63 @@ FAYLabs Dashboard helps a single admin manage portfolio projects for a public po
 ```txt
 api/
 ├── auth/
+│   ├── login.php              # Handles admin login requests.
+│   └── logout.php             # Handles admin logout requests.
 ├── projects/
+│   ├── index.php              # Returns the admin project list.
+│   ├── show.php               # Returns a single project by ID.
+│   ├── create.php             # Creates a new project record.
+│   ├── update.php             # Updates an existing project record.
+│   └── delete.php             # Deletes a project record and related cover data.
 ├── public/
+│   ├── load-projects.php      # Returns paginated published projects for public pages.
+│   └── project-detail.php     # Returns public project detail data by slug.
 └── uploads/
+    └── cover.php              # Uploads project cover images to Cloudinary.
 
 assets/
+├── css/
+│   └── admin.css              # Dashboard styles, layout, responsive rules, and themes.
+└── js/
+    ├── admin.js               # Dashboard interactions and project management UI logic.
+    ├── editor.js              # Markdown editor, preview, and toolbar behavior.
+    └── theme.js               # Light and dark mode toggle handling.
+
 config/
+├── app.php                    # App-level configuration and environment loading.
+├── cloudinary.php             # Cloudinary configuration and upload helpers.
+└── database.php               # MySQL PDO connection configuration.
+
 database/
-docs/
+├── schema.sql                 # Database table definitions.
+└── seed-admin.php             # Initial admin account seeding script.
+
 includes/
+├── auth.php                   # Session authentication guards and auth helpers.
+├── csrf.php                   # CSRF token generation and validation helpers.
+├── helpers.php                # Shared utility functions.
+├── response.php               # JSON response helpers.
+└── validator.php              # Request validation helpers.
+
 pages/
+├── login.php                  # Admin login page.
+├── logout.php                 # Admin logout page.
+├── index.php                  # Admin project list page.
+├── create.php                 # Project creation page.
+└── edit.php                   # Project editing page.
+
 partials/
-PRD.md
+├── head.php                   # Shared document head and asset includes.
+├── sidebar.php                # Shared dashboard sidebar navigation.
+└── footer.php                 # Shared footer scripts and closing layout.
+
+docs/
+└── superpowers/               # Planning and specification documents.
+
+.env.example                   # Example environment variable template.
+.htaccess                      # Apache rewrite and routing rules.
+PRD.md                         # Product requirements and implementation plan.
+README.md                      # Project documentation.
 ```
 
 ## Main Routes
@@ -106,14 +151,3 @@ database/seed-admin.php
 - Protect state-changing requests with CSRF tokens.
 - Keep admin-only endpoints behind PHP session checks.
 
-## Product Requirements
-
-Detailed requirements, acceptance criteria, and implementation notes are documented in:
-
-```txt
-PRD.md
-```
-
-## Development Status
-
-This repository follows the implementation plan in `PRD.md`, including authentication, project CRUD, Cloudinary uploads, Markdown rendering, public portfolio integration, SEO metadata, and responsive UI refinement.
