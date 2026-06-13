@@ -9,8 +9,8 @@
 <aside id="admin-sidebar" class="sidebar" role="navigation" aria-label="Admin navigation">
   <!-- Brand -->
   <div class="sidebar-brand">
-    <div class="brand-icon-sm" aria-hidden="true">
-      <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>
+    <div class="brand-icon-sm" aria-hidden="true" style="background: transparent;">
+      <img src="<?= BASE_PATH ?>/assets/favicon/favicon-32x32.png" alt="FAY Labs Logo" style="width: 32px; height: 32px; border-radius: 8px;">
     </div>
     <span class="brand-name">FAY Labs</span>
   </div>
