@@ -156,6 +156,10 @@ require_once ROOT_PATH . '/partials/head.php';
               <i class="bi bi-envelope-open" aria-hidden="true"></i>
               Mark as read
             </button>
+            <button type="button" class="btn btn-danger btn-sm" data-email-delete>
+              <i class="bi bi-trash" aria-hidden="true"></i>
+              Delete
+            </button>
             <button type="button" class="btn btn-primary btn-sm" data-email-reply>
               <i class="bi bi-reply" aria-hidden="true"></i>
               Reply
@@ -238,6 +242,7 @@ require_once ROOT_PATH . '/partials/head.php';
     const date          = document.querySelector('[data-email-detail-date]');
     const body          = document.querySelector('[data-email-detail-body]');
     const toggleReadBtn = document.querySelector('[data-email-toggle-read]');
+    const deleteBtn     = document.querySelector('[data-email-delete]');
     const replyBtn      = document.querySelector('[data-email-reply]');
     const backBtn       = document.querySelector('.email-back-btn');
     const listPanel     = document.querySelector('.email-list-panel');
@@ -362,6 +367,38 @@ require_once ROOT_PATH . '/partials/head.php';
           showToast(error.message || 'Failed to update email.', 'danger');
         } finally {
           toggleReadBtn.disabled = false;
+        }
+      });
+    }
+
+    // ── Delete email ──────────────────────────────────────────
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', async function () {
+        if (!activeItem || !confirm('Delete this email?')) return;
+
+        deleteBtn.disabled = true;
+
+        try {
+          const formData = new FormData();
+          formData.append('id', activeItem.dataset.emailId || '0');
+          formData.append('csrf_token', FAY_CONFIG.csrfToken);
+
+          const response = await fetch(FAY_CONFIG.apiBase + '/emails/delete.php', {
+            method: 'POST',
+            body: formData,
+          });
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Failed to delete email.');
+          }
+
+          showToast(result.message || 'Email deleted successfully.', 'success');
+          window.location.reload();
+        } catch (error) {
+          showToast(error.message || 'Failed to delete email.', 'danger');
+        } finally {
+          deleteBtn.disabled = false;
         }
       });
     }
