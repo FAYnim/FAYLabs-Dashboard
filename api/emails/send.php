@@ -71,7 +71,10 @@ try {
     $mail->AltBody = $email['body'];
     $mail->send();
 
-    jsonSuccess('Email sent successfully.');
+    $updateStmt = $pdo->prepare('UPDATE emails SET sent_at = NOW() WHERE id = ?');
+    $updateStmt->execute([$id]);
+
+    jsonSuccess('Email berhasil terkirim.');
 } catch (MailException $e) {
     file_put_contents(ROOT_PATH . '/send-email.log', 'Email gagal dikirim: ' . $mail->ErrorInfo . PHP_EOL, FILE_APPEND);
     jsonError('Failed to send email. Please try again.', [], 500);

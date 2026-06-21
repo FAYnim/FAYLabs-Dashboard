@@ -436,12 +436,12 @@ require_once ROOT_PATH . '/partials/head.php';
           const result = await response.json();
 
           if (!response.ok || !result.success) {
-            throw new Error(result.message || 'Failed to send email.');
+            throw new Error(result.message || 'Email gagal terkirim.');
           }
 
-          showToast(result.message || 'Email sent successfully.', 'success');
+          showToast(result.message || 'Email berhasil terkirim.', 'success');
         } catch (error) {
-          showToast(error.message || 'Failed to send email.', 'danger');
+          showToast(error.message || 'Email gagal terkirim.', 'danger');
         } finally {
           sendBtn.disabled = false;
         }
