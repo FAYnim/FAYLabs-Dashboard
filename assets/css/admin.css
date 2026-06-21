@@ -1417,6 +1417,13 @@ select.form-control { cursor: pointer; }
   color: var(--text-primary);
 }
 
+.compose-modal-box .form-control:focus {
+  color: #fff;
+  background: var(--bg-canvas);
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
 .compose-message {
   resize: vertical;
   min-height: 180px;
