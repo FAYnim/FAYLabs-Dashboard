@@ -18,6 +18,8 @@
     },
 
     show(message, type = 'success', duration = 4000) {
+      if (type === 'danger') type = 'error';
+
       const icons = {
         success: '<svg viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>',
         error:   '<svg viewBox="0 0 16 16"><path d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/></svg>',
@@ -25,7 +27,7 @@
       };
 
       const $toast = $(`
-        <div class="toast toast-${type}">
+        <div class="toast show toast-${type}">
           <span class="toast-icon">${icons[type] || icons.success}</span>
           <span class="toast-message">${escapeHtml(message)}</span>
           <button class="toast-close" aria-label="Close">×</button>
