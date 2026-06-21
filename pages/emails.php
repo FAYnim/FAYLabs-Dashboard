@@ -34,6 +34,7 @@ try {
             'subject'         => $email['subject'],
             'preview'         => mb_strimwidth(trim(preg_replace('/\s+/', ' ', $email['body'])), 0, 100, '...'),
             'body'            => $email['body'],
+            'direction'       => $email['direction'],
             'date'            => date('M j, H:i', strtotime($email['sent_at'])),
             'unread'          => !$email['is_read'],
         ];
@@ -125,6 +126,7 @@ require_once ROOT_PATH . '/partials/head.php';
                   data-email="<?= e($email['email']) ?>"
                   data-subject="<?= e($email['subject']) ?>"
                   data-body="<?= e($email['body']) ?>"
+                  data-direction="<?= e($email['direction']) ?>"
                   data-date="<?= e($email['date']) ?>"
                   data-unread="<?= $email['unread'] ? '1' : '0' ?>"
                   role="listitem">
@@ -159,6 +161,10 @@ require_once ROOT_PATH . '/partials/head.php';
             <button type="button" class="btn btn-danger btn-sm" data-email-delete>
               <i class="bi bi-trash" aria-hidden="true"></i>
               Delete
+            </button>
+            <button type="button" class="btn btn-success btn-sm" data-email-send <?= ($selectedEmail['direction'] ?? '') === 'outgoing' ? '' : 'hidden' ?>>
+              <i class="bi bi-send" aria-hidden="true"></i>
+              Send Email
             </button>
             <button type="button" class="btn btn-primary btn-sm" data-email-reply>
               <i class="bi bi-reply" aria-hidden="true"></i>
@@ -243,6 +249,7 @@ require_once ROOT_PATH . '/partials/head.php';
     const body          = document.querySelector('[data-email-detail-body]');
     const toggleReadBtn = document.querySelector('[data-email-toggle-read]');
     const deleteBtn     = document.querySelector('[data-email-delete]');
+    const sendBtn       = document.querySelector('[data-email-send]');
     const replyBtn      = document.querySelector('[data-email-reply]');
     const backBtn       = document.querySelector('.email-back-btn');
     const listPanel     = document.querySelector('.email-list-panel');
@@ -276,6 +283,7 @@ require_once ROOT_PATH . '/partials/head.php';
       if (body)    body.innerHTML      = (item.dataset.body || '').replace(/\n/g, '<br>');
 
       updateReadButton();
+      updateSendButton();
 
       // On mobile: hide list, show detail
       if (window.innerWidth <= 900 && listPanel && detailPanel) {
@@ -291,6 +299,11 @@ require_once ROOT_PATH . '/partials/head.php';
       toggleReadBtn.innerHTML = isUnread
         ? '<i class="bi bi-envelope-open" aria-hidden="true"></i> Mark as read'
         : '<i class="bi bi-envelope" aria-hidden="true"></i> Mark as unread';
+    }
+
+    function updateSendButton() {
+      if (!sendBtn || !activeItem) return;
+      sendBtn.hidden = activeItem.dataset.direction !== 'outgoing';
     }
 
     // ── Compose modal open/close ──────────────────────────────
@@ -403,6 +416,38 @@ require_once ROOT_PATH . '/partials/head.php';
       });
     }
 
+    // ── Send outgoing email ───────────────────────────────────
+    if (sendBtn) {
+      sendBtn.addEventListener('click', async function () {
+        if (!activeItem || activeItem.dataset.direction !== 'outgoing') return;
+        if (!confirm('Send this email?')) return;
+
+        sendBtn.disabled = true;
+
+        try {
+          const formData = new FormData();
+          formData.append('id', activeItem.dataset.emailId || '0');
+          formData.append('csrf_token', FAY_CONFIG.csrfToken);
+
+          const response = await fetch(FAY_CONFIG.apiBase + '/emails/send.php', {
+            method: 'POST',
+            body: formData,
+          });
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Failed to send email.');
+          }
+
+          showToast(result.message || 'Email sent successfully.', 'success');
+        } catch (error) {
+          showToast(error.message || 'Failed to send email.', 'danger');
+        } finally {
+          sendBtn.disabled = false;
+        }
+      });
+    }
+
     // ── Reply pre-fills compose ───────────────────────────────
     if (replyBtn) {
       replyBtn.addEventListener('click', function () {
@@ -489,8 +534,9 @@ require_once ROOT_PATH . '/partials/head.php';
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // Initial read button state
+    // Initial button state
     updateReadButton();
+    updateSendButton();
   });
 </script>
 
