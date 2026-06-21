@@ -49,3 +49,25 @@ CREATE TABLE IF NOT EXISTS `projects` (
     KEY `idx_projects_status` (`status`),
     KEY `idx_projects_published_at` (`published_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+-- Table: emails
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `emails` (
+    `id`              INT UNSIGNED                 NOT NULL AUTO_INCREMENT,
+    `sender_name`     VARCHAR(150)                 NULL DEFAULT NULL,
+    `sender_email`    VARCHAR(255)                 NOT NULL,
+    `recipient_email` VARCHAR(255)                 NOT NULL,
+    `subject`         VARCHAR(255)                 NOT NULL,
+    `body`            LONGTEXT                     NOT NULL,
+    `direction`       ENUM('incoming','outgoing')  NOT NULL DEFAULT 'incoming',
+    `is_read`         TINYINT(1) UNSIGNED          NOT NULL DEFAULT 0,
+    `sent_at`         DATETIME                     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at`      TIMESTAMP                    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`      TIMESTAMP                    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_emails_direction_sent_at` (`direction`, `sent_at`),
+    KEY `idx_emails_is_read` (`is_read`),
+    KEY `idx_emails_sender_email` (`sender_email`),
+    KEY `idx_emails_recipient_email` (`recipient_email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
