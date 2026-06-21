@@ -1,10 +1,10 @@
 # FAYLabs Dashboard
 
-A lightweight portfolio project CMS dashboard built with native PHP, MySQL, Bootstrap, Bootstrap Icons, jQuery, and Cloudinary.
+A lightweight portfolio project CMS dashboard built with native PHP, MySQL, Bootstrap, Bootstrap Icons, jQuery, Cloudinary, and PHPMailer.
 
 ## Overview
 
-FAYLabs Dashboard helps a single admin manage portfolio projects for a public portfolio site. It supports creating projects, editing metadata, saving drafts, publishing projects, uploading cover images, and writing project detail content in GitHub-flavored Markdown.
+FAYLabs Dashboard helps a single admin manage portfolio projects and contact emails for a public portfolio site. It supports creating projects, editing metadata, saving drafts, publishing projects, uploading cover images, writing project detail content in GitHub-flavored Markdown, storing contact form emails, composing outgoing emails, and sending saved email drafts through SMTP.
 
 ## Features
 
@@ -15,9 +15,11 @@ FAYLabs Dashboard helps a single admin manage portfolio projects for a public po
 - Cloudinary cover image upload
 - Markdown editor and live preview
 - Public project listing and detail pages
+- Email inbox for incoming contact messages
+- Outgoing email compose, save, send, delete, and read status workflow
 - Light and dark mode support
 - Responsive dashboard layout
-- JSON API endpoints for admin and public project data
+- JSON API endpoints for admin, public project, upload, and email data
 
 ## Tech Stack
 
@@ -28,6 +30,7 @@ FAYLabs Dashboard helps a single admin manage portfolio projects for a public po
 | Database | MySQL |
 | Markdown | marked.js, highlight.js, DOMPurify |
 | Image Storage | Cloudinary |
+| Email | PHPMailer, SMTP |
 | Authentication | PHP Session, password_hash(), password_verify() |
 
 ## Project Structure
@@ -37,6 +40,11 @@ api/
 ├── auth/
 │   ├── login.php              # Handles admin login requests.
 │   └── logout.php             # Handles admin logout requests.
+├── emails/
+│   ├── create.php             # Saves outgoing email drafts.
+│   ├── delete.php             # Deletes email records.
+│   ├── send.php               # Sends saved outgoing emails through SMTP.
+│   └── toggle-read.php        # Updates email read status.
 ├── projects/
 │   ├── index.php              # Returns the admin project list.
 │   ├── show.php               # Returns a single project by ID.
@@ -69,6 +77,7 @@ database/
 includes/
 ├── auth.php                   # Session authentication guards and auth helpers.
 ├── csrf.php                   # CSRF token generation and validation helpers.
+├── emails.php                 # Contact email persistence helpers.
 ├── helpers.php                # Shared utility functions.
 ├── response.php               # JSON response helpers.
 └── validator.php              # Request validation helpers.
@@ -78,7 +87,8 @@ pages/
 ├── logout.php                 # Admin logout page.
 ├── index.php                  # Admin project list page.
 ├── create.php                 # Project creation page.
-└── edit.php                   # Project editing page.
+├── edit.php                   # Project editing page.
+└── emails.php                 # Email inbox and compose page.
 
 partials/
 ├── head.php                   # Shared document head and asset includes.
@@ -103,6 +113,7 @@ README.md                      # Project documentation.
 /pages/index.php
 /pages/create.php
 /pages/edit.php?id={id}
+/pages/emails.php
 /pages/logout.php
 ```
 
@@ -111,6 +122,10 @@ README.md                      # Project documentation.
 ```txt
 /api/projects
 /api/projects/:id
+/api/emails/create.php
+/api/emails/delete.php
+/api/emails/send.php
+/api/emails/toggle-read.php
 /api/public/latest-projects.php
 /api/public/load-projects.php
 /api/public/project-detail.php
@@ -119,19 +134,27 @@ README.md                      # Project documentation.
 
 ## Environment Variables
 
-Create a local `.env` file based on `.env.example` and configure the required database and Cloudinary credentials.
+Create a local `.env` file based on `.env.example` and configure the required database, email, and Cloudinary credentials.
 
 ```txt
+DB_HOST
+DB_NAME
+DB_USER
+DB_PASS
+EMAIL_PASSWORD
+MAIL_FROM_ADDRESS
 CLOUDINARY_CLOUD_NAME
 CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET
+CLOUDINARY_FOLDER
+BASE_PATH
 ```
 
-Do not commit `.env` or expose Cloudinary API secrets in frontend code.
+Do not commit `.env` or expose Cloudinary and email secrets in frontend code.
 
 ## Database
 
-The database schema is stored in:
+The database schema includes `admins`, `projects`, and `emails` tables and is stored in:
 
 ```txt
 database/schema.sql
