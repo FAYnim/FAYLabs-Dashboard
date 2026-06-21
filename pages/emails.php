@@ -5,6 +5,7 @@
 
 define('ROOT_PATH', dirname(__DIR__));
 require_once ROOT_PATH . '/config/app.php';
+require_once ROOT_PATH . '/config/database.php';
 require_once ROOT_PATH . '/includes/auth.php';
 require_once ROOT_PATH . '/includes/csrf.php';
 require_once ROOT_PATH . '/includes/helpers.php';
@@ -16,58 +17,31 @@ $pageTitle  = 'Emails';
 $activePage = 'emails';
 $csrfToken  = csrfGenerate();
 
-$emails = [
-    [
-        'id'      => 1,
-        'sender'  => 'Nadia Putri',
-        'email'   => 'nadia.putri@example.com',
-        'subject' => 'Inquiry untuk website company profile',
-        'preview' => 'Halo FAYLabs, saya ingin bertanya tentang pembuatan website company profile untuk bisnis kami.',
-        'body'    => "Halo FAYLabs,\n\nSaya ingin bertanya tentang pembuatan website company profile untuk bisnis kami. Kami membutuhkan halaman profil, layanan, portfolio, dan contact form.\n\nApakah bisa dibantu untuk estimasi timeline dan biaya?\n\nTerima kasih.",
-        'date'    => 'Today, 09:42',
-        'unread'  => true,
-    ],
-    [
-        'id'      => 2,
-        'sender'  => 'Raka Pratama',
-        'email'   => 'raka.pratama@example.com',
-        'subject' => 'Maintenance dashboard internal',
-        'preview' => 'Kami punya dashboard internal yang perlu dirapikan dan ditambah beberapa fitur reporting.',
-        'body'    => "Hi FAYLabs,\n\nKami punya dashboard internal yang perlu dirapikan dan ditambah beberapa fitur reporting. Saat ini aplikasinya sudah berjalan, tetapi UI dan alurnya masih membingungkan untuk tim operasional.\n\nBisa diskusi minggu ini?",
-        'date'    => 'Yesterday, 16:18',
-        'unread'  => true,
-    ],
-    [
-        'id'      => 3,
-        'sender'  => 'Maya Sari',
-        'email'   => 'maya.sari@example.com',
-        'subject' => 'Request redesign landing page',
-        'preview' => 'Landing page produk kami butuh tampilan yang lebih modern dan conversion-focused.',
-        'body'    => "Halo,\n\nLanding page produk kami butuh tampilan yang lebih modern dan conversion-focused. Targetnya meningkatkan jumlah demo request dari traffic iklan.\n\nSaya ingin tahu apakah FAYLabs menerima project redesign seperti ini.",
-        'date'    => 'Jun 19',
-        'unread'  => false,
-    ],
-    [
-        'id'      => 4,
-        'sender'  => 'Ardi Wijaya',
-        'email'   => 'ardi.wijaya@example.com',
-        'subject' => 'Integrasi Cloudinary untuk portfolio',
-        'preview' => 'Saya melihat FAYLabs punya pengalaman Cloudinary. Kami ingin integrasi upload image.',
-        'body'    => "Selamat siang,\n\nSaya melihat FAYLabs punya pengalaman Cloudinary. Kami ingin integrasi upload image untuk portfolio dan artikel di CMS kami.\n\nApakah bisa dibuatkan modul upload dan optimasi gambar?",
-        'date'    => 'Jun 18',
-        'unread'  => false,
-    ],
-    [
-        'id'      => 5,
-        'sender'  => 'Lina Kartika',
-        'email'   => 'lina.kartika@example.com',
-        'subject' => 'Kolaborasi project edukasi digital',
-        'preview' => 'Kami sedang menyiapkan platform edukasi digital dan mencari partner development.',
-        'body'    => "Halo FAYLabs,\n\nKami sedang menyiapkan platform edukasi digital dan mencari partner development untuk MVP. Fokus awalnya course listing, enrollment, dan dashboard siswa.\n\nJika tertarik, kami ingin menjadwalkan call singkat.",
-        'date'    => 'Jun 17',
-        'unread'  => false,
-    ],
-];
+try {
+    $pdo  = Database::getConnection();
+    $stmt = $pdo->query(
+        "SELECT id, sender_name, sender_email, recipient_email, subject, body, direction, is_read, sent_at
+         FROM emails ORDER BY sent_at DESC"
+    );
+    $emails = array_map(function ($email) {
+        $sender = $email['sender_name'] ?: $email['sender_email'];
+
+        return [
+            'id'              => $email['id'],
+            'sender'          => $sender,
+            'email'           => $email['sender_email'],
+            'recipient_email' => $email['recipient_email'],
+            'subject'         => $email['subject'],
+            'preview'         => mb_strimwidth(trim(preg_replace('/\s+/', ' ', $email['body'])), 0, 100, '...'),
+            'body'            => $email['body'],
+            'date'            => date('M j, H:i', strtotime($email['sent_at'])),
+            'unread'          => !$email['is_read'],
+        ];
+    }, $stmt->fetchAll());
+} catch (Exception $e) {
+    $emails  = [];
+    $dbError = 'Failed to load emails.';
+}
 
 $selectedEmail = $emails[0] ?? null;
 
@@ -105,8 +79,15 @@ require_once ROOT_PATH . '/partials/head.php';
   <main class="page-content">
     <div class="page-header">
       <h2>Emails</h2>
-      <p>Manage incoming FAYLabs emails. Backend integration is not connected yet.</p>
+      <p>Manage incoming FAYLabs emails.</p>
     </div>
+
+    <?php if (isset($dbError)): ?>
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      <?= e($dbError) ?>
+    </div>
+    <?php endif; ?>
 
     <?php if (empty($emails)): ?>
     <!-- Empty State -->
@@ -217,26 +198,26 @@ require_once ROOT_PATH . '/partials/head.php';
     <form id="compose-form" novalidate>
       <div class="form-group">
         <label class="form-label" for="compose-to">To</label>
-        <input type="email" id="compose-to" name="to" class="form-control" placeholder="client@example.com">
+        <input type="email" id="compose-to" name="to" class="form-control" placeholder="client@example.com" required>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="compose-subject">Subject</label>
-        <input type="text" id="compose-subject" name="subject" class="form-control" placeholder="Email subject">
+        <input type="text" id="compose-subject" name="subject" class="form-control" placeholder="Email subject" required>
       </div>
 
       <div class="form-group">
         <label class="form-label" for="compose-message">Message</label>
-        <textarea id="compose-message" name="message" class="form-control compose-message" rows="8" placeholder="Write your message..."></textarea>
+        <textarea id="compose-message" name="message" class="form-control compose-message" rows="8" placeholder="Write your message..." required></textarea>
       </div>
 
-      <p class="form-hint">Email sending is not connected yet. This form is UI-only.</p>
+      <p class="form-hint">Email will be saved as outgoing message.</p>
 
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" data-compose-close>Cancel</button>
         <button type="submit" class="btn btn-primary">
           <i class="bi bi-send" aria-hidden="true"></i>
-          Send Placeholder
+          Save Email
         </button>
       </div>
     </form>
@@ -332,27 +313,56 @@ require_once ROOT_PATH . '/partials/head.php';
 
     // ── Mark read/unread ──────────────────────────────────────
     if (toggleReadBtn) {
-      toggleReadBtn.addEventListener('click', function () {
+      toggleReadBtn.addEventListener('click', async function () {
         if (!activeItem) return;
 
-        const nextUnread = activeItem.dataset.unread !== '1';
-        activeItem.dataset.unread = nextUnread ? '1' : '0';
-        activeItem.classList.toggle('unread', nextUnread);
+        const previousUnread = activeItem.dataset.unread === '1';
+        const nextUnread = !previousUnread;
 
-        const dot = activeItem.querySelector('.email-unread-dot');
-        if (nextUnread && !dot) {
-          const subjectRow = activeItem.querySelector('.email-subject-row');
-          if (subjectRow) {
-            const newDot = document.createElement('span');
-            newDot.className = 'email-unread-dot';
-            newDot.setAttribute('aria-label', 'Unread');
-            subjectRow.prepend(newDot);
+        function setUnreadState(isUnread) {
+          activeItem.dataset.unread = isUnread ? '1' : '0';
+          activeItem.classList.toggle('unread', isUnread);
+
+          const dot = activeItem.querySelector('.email-unread-dot');
+          if (isUnread && !dot) {
+            const subjectRow = activeItem.querySelector('.email-subject-row');
+            if (subjectRow) {
+              const newDot = document.createElement('span');
+              newDot.className = 'email-unread-dot';
+              newDot.setAttribute('aria-label', 'Unread');
+              subjectRow.prepend(newDot);
+            }
           }
+          if (!isUnread && dot) dot.remove();
+          updateReadButton();
         }
-        if (!nextUnread && dot) dot.remove();
 
-        updateReadButton();
-        showToast(nextUnread ? 'Email marked as unread.' : 'Email marked as read.', 'success');
+        setUnreadState(nextUnread);
+        toggleReadBtn.disabled = true;
+
+        try {
+          const formData = new FormData();
+          formData.append('id', activeItem.dataset.emailId || '0');
+          formData.append('is_read', nextUnread ? '0' : '1');
+          formData.append('csrf_token', FAY_CONFIG.csrfToken);
+
+          const response = await fetch(FAY_CONFIG.apiBase + '/emails/toggle-read.php', {
+            method: 'POST',
+            body: formData,
+          });
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Failed to update email.');
+          }
+
+          showToast(result.message || (nextUnread ? 'Email marked as unread.' : 'Email marked as read.'), 'success');
+        } catch (error) {
+          setUnreadState(previousUnread);
+          showToast(error.message || 'Failed to update email.', 'danger');
+        } finally {
+          toggleReadBtn.disabled = false;
+        }
       });
     }
 
@@ -392,13 +402,37 @@ require_once ROOT_PATH . '/partials/head.php';
       }
     });
 
-    // ── Compose submit (placeholder) ─────────────────────────
+    // ── Compose submit ──────────────────────────────────────
     if (composeForm) {
-      composeForm.addEventListener('submit', function (e) {
+      composeForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        showToast('Email sending is not connected yet.', 'warning');
-        setModalOpen(false);
-        composeForm.reset();
+
+        const submitBtn = composeForm.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+          const formData = new FormData(composeForm);
+          formData.append('csrf_token', FAY_CONFIG.csrfToken);
+
+          const response = await fetch(FAY_CONFIG.apiBase + '/emails/create.php', {
+            method: 'POST',
+            body: formData,
+          });
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Failed to save email.');
+          }
+
+          showToast(result.message || 'Email saved successfully.', 'success');
+          setModalOpen(false);
+          composeForm.reset();
+          window.location.reload();
+        } catch (error) {
+          showToast(error.message || 'Failed to save email.', 'danger');
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
       });
     }
 
