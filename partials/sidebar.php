@@ -32,6 +32,13 @@
       <i class="bi bi-plus-circle" aria-hidden="true"></i>
       New Project
     </a>
+
+    <a href="<?= BASE_PATH ?>/emails"
+       class="nav-item <?= ($activePage === 'emails') ? 'active' : '' ?>"
+       id="nav-emails">
+      <i class="bi bi-envelope" aria-hidden="true"></i>
+      Emails
+    </a>
   </nav>
 
   <!-- Footer -->
